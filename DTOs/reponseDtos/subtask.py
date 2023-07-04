@@ -11,4 +11,5 @@ class ResponseSubTask(BaseModel):
   title: str
   pos: int
   taskId: str
+  isCompleted: bool = Field(default=False)
   existing: bool = Field(default=True)

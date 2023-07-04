@@ -16,6 +16,10 @@ def get_bucket_by_id(db: Session, id: str) -> Bucket:
   
   return db.query(Bucket).filter(Bucket.id == id).first()
 
+def get_bucket_by_name(db: Session, name: str) -> Bucket:
+  
+  return db.query(Bucket).filter(Bucket.name == name).first()
+
 
 def create_bucket(db: Session, bucket: RequestCreateNewBucket) -> Bucket:
    

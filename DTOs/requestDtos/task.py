@@ -16,11 +16,9 @@ class RequestEditSubTasks(BaseModel):
 
 class RequestEditTask(BaseModel):
     id: str
-    title: str
+    title: str | None
     description: str | None
-    status: str
+    status: str | None
     bucketId: str
     subtasks: list[RequestEditSubTasks]
-
-
-    
+ 

@@ -9,6 +9,7 @@ def get_subtask_reponse(subtask: SubTask) -> ResponseSubTask:
       title = subtask.title,
       pos = subtask.position,
       taskId= subtask.task_id,
+      isCompleted= subtask.isCompleted,
       existing = True
     )
   
