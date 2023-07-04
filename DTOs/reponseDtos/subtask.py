@@ -6,12 +6,9 @@ class ResponseDeleteTask(BaseModel):
   id: str
 
 
-class ResponseTask(BaseModel):
+class ResponseSubTask(BaseModel):
   id: str
   title: str
-  description: str
-  status: str
   pos: int
-  bucketId: str
-  subtasks: List[Any]
+  taskId: str
   existing: bool = Field(default=True)

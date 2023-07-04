@@ -47,7 +47,7 @@ async def createBoard(board: RequestCreateNewBoard, db: Session = Depends(get_db
   if created_board:
 
     buckets = [ Bucket(name = name, position = index, board_id = created_board.id) for index, name in enumerate(board.buckets)]
-    create_bucket_bulk(db, created_board.id, buckets)
+    create_bucket_bulk(db, buckets)
     update_active_board_status(db, created_board.id)
 
     board_response = get_board_response(created_board)

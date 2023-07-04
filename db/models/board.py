@@ -26,3 +26,35 @@ class Bucket(Timestamp, Base):
   board_id = Column(String, ForeignKey("boards.id"), nullable=False)
 
   board =  relationship("Board", back_populates="buckets")    # Board.buckets => from Board
+  tasks = relationship("Task", back_populates="bucket")
+
+
+class Task(Timestamp, Base):
+  __tablename__ = "tasks"
+
+  id = Column(String, primary_key=True, default=generate_uuid, unique=True, nullable=False)
+  title = Column(String(200), nullable=False)
+  description = Column(Text, nullable=True)
+  status = Column(String(20), nullable=False)
+  position = Column(Integer, nullable=False)
+  bucket_id = Column(String, ForeignKey("bucktes.id"), nullable=False)
+
+  bucket = relationship("Bucket", back_populates="tasks")
+  subtasks = relationship("SubTask", back_populates="task")
+
+
+class SubTask(Timestamp, Base):
+  __tablename__ = "subtasks"
+
+  id = Column(String, primary_key=True, default=generate_uuid, unique=True, nullable=False)
+  title = Column(String(200), nullable=False)
+  position = Column(Integer, nullable=False)
+  isCompleted = Column(Boolean, default=False)
+  task_id = Column(String, ForeignKey("tasks.id"), nullable=False)
+
+  task = relationship("Task", back_populates="subtasks")
+
+
+
+
+
