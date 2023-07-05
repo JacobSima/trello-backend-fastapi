@@ -1,11 +1,10 @@
 import fastapi
 from sqlalchemy.orm import Session
-from fastapi import Depends, HTTPException
-from uuid import uuid4, UUID
+from fastapi import Depends
 
-from DTOs.requestDtos.board import RequestCreateNewBoard, RequestEditBoardNameOnly, RequestEditBoard
-from api.utils.boards import get_boards, create_board, update_active_board_status, update_board_name, get_board
-from api.utils.buckets import create_bucket_bulk, update_bucket_name, delete_bucket, update_bucket_position
+from DTOs.requestDtos.board import RequestCreateNewBoard, RequestEditBoard
+from api.utils.boards import delete_board_by_id, get_boards, create_board, update_active_board_status, update_board_name, get_board, update_board_active
+from api.utils.buckets import create_bucket_bulk, update_bucket_name, delete_bucket
 from db.db_setup import get_db
 from db.models.board import Bucket
 from api.utils.boardResponse import build_boards_repsonse, get_board_response
@@ -37,6 +36,10 @@ async def getBoard(board_id: str, db: Session = Depends(get_db)):
   
   return {"board": {}} # Error
 
+@router.get("/api/boards/updateactiveboard/{index}")
+async def updateActiveBoard(index: str, db: Session = Depends(get_db)):
+  update_board_active(db, index)
+  return {"success": True}
 
 
 @router.post("/api/boards", status_code=201)
@@ -48,22 +51,12 @@ async def createBoard(board: RequestCreateNewBoard, db: Session = Depends(get_db
 
     buckets = [ Bucket(name = name, position = index, board_id = created_board.id) for index, name in enumerate(board.buckets)]
     create_bucket_bulk(db, buckets)
-    update_active_board_status(db, created_board.id)
+    board_updated = update_active_board_status(db, created_board.id)
 
-    board_response = get_board_response(created_board)
+    board_response = get_board_response(board_updated)
     return {"board": board_response}
   
   return {"board": "created"}  # Error
-
-
-
-@router.put("/api/boards/updatenameonly")
-async def updateNameOnly(board: RequestEditBoardNameOnly, db: Session = Depends(get_db)):
-  
-  board = update_board_name(db, board.id, board.name)
-
-  board_response = get_board_response(board)
-  return {"board": board_response}
 
 
 
@@ -78,31 +71,29 @@ async def editBoard(board: RequestEditBoard, db: Session = Depends(get_db)):
   if board.nameChanged:
     update_board_name(db, board.id, board.name)
 
-
   if len(updated_buckets) > 0 : 
     for bucket in updated_buckets:
       update_bucket_name(db, bucket.id, bucket.name)
+  
+  if len(new_buckets) > 0 :
+    existingBoard = get_board(db, board.id)
+    boardLen = len(existingBoard.buckets)
+
+    buckets = [ Bucket(name = item.name, position = boardLen + index, board_id = board.id) for index, item in enumerate(new_buckets)]
+    create_bucket_bulk(db, buckets)
 
   if len(deleted_buckets) > 0 :
     for bucket in deleted_buckets:
       delete_bucket(db, bucket.id)
-    update_bucket_position(db, board.id)
 
-
-  if len(new_buckets) > 0 :
-    buckets = [ Bucket(name = item.name, position = index, board_id = board.id) for index, item in enumerate(new_buckets)]
-    create_bucket_bulk(db, buckets)
-    update_bucket_position(db, board.id)
-  
-    
   board_updated = get_board(db, board.id)
   board_response = get_board_response(board_updated)
   return {"board": board_response}
 
 
+@router.delete("/api/boards/{board_id}")
+async def deleteBoard(board_id: str, db: Session = Depends(get_db)):
 
-
-# @router.delete("/api/boards/{boardId}")
-# async def deleteBoard(boardId: UUID):
-#   delete_board_by_id(boardId)
-#   return "deleted"
+  success = delete_board_by_id(db, board_id)
+  
+  return {"success": success}

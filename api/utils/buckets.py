@@ -1,9 +1,7 @@
 from sqlalchemy.orm import Session
 from DTOs.requestDtos.bucket import RequestCreateNewBucket
-from DTOs.requestDtos.board import RequestBoardEditedBucket, RequestCreateNewBoard
 
 from db.models.board import Bucket, Board
-from api.utils.boards import get_board_by_id
 
 
 def get_buckets(db: Session, skip: int = 0, limit: int = 50):
@@ -24,7 +22,7 @@ def get_bucket_by_name(db: Session, name: str) -> Bucket:
 def create_bucket(db: Session, bucket: RequestCreateNewBucket) -> Bucket:
    
    position = 0
-   board = get_board_by_id(db, bucket.boardId)
+   board = db.query(Board).filter(Board.is_active == True)
 
    if board is not None:
      position = len(board.buckets)
@@ -56,20 +54,20 @@ def update_bucket_name(db: Session, id: str, name: str):
   return bucket
 
 
-def update_bucket_position(db: Session, id: str):
-  buckets = db.query(Bucket).all()
-
-  for index, bucket in enumerate(buckets):
-    bucket.position = index
-
-  db.commit()
-
-
 def delete_bucket(db: Session, id: str):
 
-  board = db.query(Bucket).filter(Bucket.id == id).first()
-  
-  # TODO: also remove tasks linked to this bucket
-  db.delete(board)
+  bucket = db.query(Bucket).filter(Bucket.id == id).first()
+
+  tasks = bucket.tasks
+  if tasks is not None:
+    for task in tasks:
+      if task.subtasks is not None:
+        for subtask in task.subtasks:
+          # db.delete(subtask)
+          pass
+
+      db.delete(task)    
+
+  db.delete(bucket)
   db.commit()
 

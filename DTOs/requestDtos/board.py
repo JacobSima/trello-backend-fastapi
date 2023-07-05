@@ -4,7 +4,6 @@ from pydantic import BaseModel, Field
 # Add New baord modal data
 class RequestCreateNewBoard(BaseModel):
   name : str
-  isActive: bool = Field(default=False)
   buckets: list[str] 
 
 
@@ -18,7 +17,7 @@ class RequestEditBoardNameOnly(BaseModel):
 # Edit Board columns data
 class RequestBoardEditedBucket(BaseModel):
     name: str
-    id:str
+    id:str | None
     deleted: bool = Field(default=False)   # if deleted
     updated: bool = Field(default=False)  # check name(with reducer), if changed
     new: bool = Field(default=False) # newly created bucket
@@ -31,12 +30,6 @@ class RequestEditBoard(BaseModel):
     id:str
     nameChanged: bool = Field(default=False)
     buckets: list[RequestBoardEditedBucket] = []
-
-
-
-# Request to delete Board
-class RequestDeleteBoard(BaseModel):
-  boardId:str
 
 
 
