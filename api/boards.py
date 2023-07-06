@@ -4,7 +4,7 @@ from fastapi import Depends
 
 from DTOs.requestDtos.board import RequestCreateNewBoard, RequestEditBoard
 from api.utils.boards import delete_board_by_id, get_boards, create_board, update_active_board_status, update_board_name, get_board, update_board_active
-from api.utils.buckets import create_bucket_bulk, update_bucket_name, delete_bucket
+from api.utils.buckets import create_bucket_bulk, update_bucket_name, delete_bucket, update_bucket_position
 from db.db_setup import get_db
 from db.models.board import Bucket
 from api.utils.boardResponse import build_boards_repsonse, get_board_response
@@ -77,7 +77,7 @@ async def editBoard(board: RequestEditBoard, db: Session = Depends(get_db)):
   
   if len(new_buckets) > 0 :
     existingBoard = get_board(db, board.id)
-    boardLen = len(existingBoard.buckets)
+    boardLen = max(tuple([bucket.position for bucket in existingBoard.buckets])) + 1 if len(existingBoard.buckets) > 0 else 1
 
     buckets = [ Bucket(name = item.name, position = boardLen + index, board_id = board.id) for index, item in enumerate(new_buckets)]
     create_bucket_bulk(db, buckets)
@@ -86,6 +86,7 @@ async def editBoard(board: RequestEditBoard, db: Session = Depends(get_db)):
     for bucket in deleted_buckets:
       delete_bucket(db, bucket.id)
 
+  update_bucket_position(db)
   board_updated = get_board(db, board.id)
   board_response = get_board_response(board_updated)
   return {"board": board_response}

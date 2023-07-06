@@ -25,7 +25,7 @@ def  create_task(db: Session, bucket_id: str, task: RequestAddNewTask) -> Task:
   db_task = Task(
     title = task.title,
     description = task.description,
-    position = len(bucket.tasks) if bucket.tasks is not None else 0,
+    position = max(tuple([task.position for task in bucket.tasks])) + 1,
     status = bucket.name,
     bucket_id = bucket_id,
   )
@@ -47,7 +47,6 @@ def  create_task(db: Session, bucket_id: str, task: RequestAddNewTask) -> Task:
 
 def update_task(db: Session, task: RequestEditTask) -> Task:
 
-  is_bucket_changed = False
   db_task = db.query(Task).filter(Task.id == task.id).first()
   
   if task.title is not None:
@@ -56,29 +55,27 @@ def update_task(db: Session, task: RequestEditTask) -> Task:
   if task.description is not None:
     db_task.description = task.description
   
-  if task.status is not None and task.status is not db_task.status:
-    # move to different bucket
+  if task.status is not None:
     new_bucket = get_bucket_by_name(db, task.status)
-    if new_bucket:
-      db_task.bucket_id = new_bucket.id
-      is_bucket_changed = True
+    db_task.bucket_id = new_bucket.id
   
   db.commit()
   db.refresh(db_task)
-  return (db_task, is_bucket_changed)
+  return db_task
 
 
+def update_both_buckets(db: Session, task: RequestEditTask):
 
-def update_both_buckets(db: Session, old_bucket_id: str, new_bucket_id: str):
+  old_bucket = get_bucket_by_id(db, task.bucketId)
+  new_bucket = get_bucket_by_name(db, task.status)
 
-  new_bucket = get_bucket_by_id(db, new_bucket_id)
-  old_bucket = get_bucket_by_id(db, old_bucket_id)
-
-  for index, task in enumerate(new_bucket.tasks):
+  for index, task in enumerate(sorted(old_bucket.tasks, key=lambda task: task.position)):
     task.position = index
 
-  for index, task in enumerate(old_bucket.tasks):
-    task.position = index
+  for index, task in enumerate(sorted(new_bucket.tasks, key=lambda task: task.position)):
+    if(task.id == task.id):
+      task.position = 0
+    task.position = index + 1
 
   db.commit()
 

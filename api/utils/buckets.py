@@ -9,7 +9,6 @@ def get_buckets(db: Session, skip: int = 0, limit: int = 50):
   return db.query(Bucket).offset(skip).limit(limit).all()
 
 
-
 def get_bucket_by_id(db: Session, id: str) -> Bucket:
   
   return db.query(Bucket).filter(Bucket.id == id).first()
@@ -25,7 +24,7 @@ def create_bucket(db: Session, bucket: RequestCreateNewBucket) -> Bucket:
    board = db.query(Board).filter(Board.is_active == True).first()
 
    if board is not None:
-     position = len(board.buckets)
+     position = max(tuple([ bucket.position for bucket in board.buckets])) + 1
    
    db_bucket = Bucket(name = bucket.name, board_id = board.id, position = position)
 
@@ -57,17 +56,27 @@ def update_bucket_name(db: Session, id: str, name: str):
 def delete_bucket(db: Session, id: str):
 
   bucket = db.query(Bucket).filter(Bucket.id == id).first()
-
-  tasks = bucket.tasks
-  if tasks is not None:
-    for task in tasks:
+  
+  if bucket.tasks is not None:
+    for task in bucket.tasks:
       if task.subtasks is not None:
         for subtask in task.subtasks:
-          # db.delete(subtask)
+          db.delete(subtask)
           pass
 
       db.delete(task)    
 
   db.delete(bucket)
   db.commit()
+
+
+def update_bucket_position(db: Session):
+  board = db.query(Board).filter(Board.is_active == True).first()
+
+  if board.buckets is not None:
+    for index, bucket in enumerate(sorted(board.buckets, key= lambda bucket: bucket.position) ):
+      bucket.position = index
+    db.commit()
+  return board
+
 

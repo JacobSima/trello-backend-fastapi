@@ -9,10 +9,13 @@ class RequestAddNewTask(BaseModel):
     bucketId: str
 
 class RequestEditSubTasks(BaseModel):
-    id: str
+    id: str | None
     title: str
     isCompleted: bool = Field(default=False)   # if deleted in front-end => isCompleted = True
-    taskId: str
+    taskId: str | None
+    deleted: bool = Field(default=False)
+    new: bool = Field(default=False)
+    updated: bool = Field(default=False)
 
 class RequestEditTask(BaseModel):
     id: str

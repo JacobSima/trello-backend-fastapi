@@ -55,6 +55,9 @@ def create_board(db: Session, board: RequestCreateNewBoard) -> Board:
 
   return db_board
 
+def get_active_Board(db: Session) -> Board:
+  return db.query(Board).filter(Board.is_active == True).first()
+
 
 def update_board_name(db: Session, id: str, name: str) -> Board:
 
