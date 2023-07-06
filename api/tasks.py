@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
 from DTOs.requestDtos.task import RequestAddNewTask, RequestEditTask
 
-from api.utils.tasks import get_tasks, get_task, create_task, update_task_position, update_task, update_both_buckets
+from api.utils.tasks import get_tasks, get_task, create_task, update_task, update_both_buckets
 from api.utils.taskResponse import get_task_reponse
 from api.utils.subtasks import create_subTask_bulk,  save__subtasks
 from db.db_setup import get_db
