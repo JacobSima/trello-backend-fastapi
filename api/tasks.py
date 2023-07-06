@@ -2,8 +2,10 @@ import fastapi
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
 from DTOs.requestDtos.task import RequestAddNewTask, RequestEditTask
+from api.utils.bucketResponse import get_bucket_response
+from api.utils.buckets import get_bucket_by_id
 
-from api.utils.tasks import get_tasks, get_task, create_task, update_task, update_both_buckets
+from api.utils.tasks import get_tasks, get_task, create_task, update_task, update_both_buckets, update_task_position
 from api.utils.taskResponse import get_task_reponse
 from api.utils.subtasks import create_subTask_bulk, saveCompletedSubtasks, saveNewSubtask, updateSubtask
 from db.db_setup import get_db
@@ -39,9 +41,11 @@ async def createTask(task: RequestAddNewTask , db: Session = Depends(get_db)):
 
   updated_task = get_task(db, task_created.id)
   
-  task_reponse = get_task_reponse(updated_task)
+  bucket = update_task_position(db, updated_task.bucket_id)
 
-  return {"task": task_reponse}
+  bucket_response = get_bucket_response(bucket)
+
+  return {"bucket": bucket_response}
 
 
 @router.put("/api/tasks/edittask")

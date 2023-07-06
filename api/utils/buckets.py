@@ -23,7 +23,7 @@ def create_bucket(db: Session, bucket: RequestCreateNewBucket) -> Bucket:
    position = 0
    board = db.query(Board).filter(Board.is_active == True).first()
 
-   if board is not None:
+   if board is not None and len(board.buckets) > 0:
      position = max(tuple([ bucket.position for bucket in board.buckets])) + 1
    
    db_bucket = Bucket(name = bucket.name, board_id = board.id, position = position)

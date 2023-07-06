@@ -21,11 +21,15 @@ def get_tasks_related_to_board(db: Session, bucket_id: str) -> list[Task]:
 
 def  create_task(db: Session, bucket_id: str, task: RequestAddNewTask) -> Task:
   bucket = get_bucket_by_id(db, bucket_id)
+  position = 0
+
+  if len(bucket.tasks) > 0 and bucket.tasks is not None: 
+    position = max(tuple([task.position for task in bucket.tasks])) + 1
 
   db_task = Task(
     title = task.title,
     description = task.description,
-    position = max(tuple([task.position for task in bucket.tasks])) + 1,
+    position = position,
     status = bucket.name,
     bucket_id = bucket_id,
   )
@@ -35,14 +39,15 @@ def  create_task(db: Session, bucket_id: str, task: RequestAddNewTask) -> Task:
   db.refresh(db_task)
   return db_task
 
-# def update_task_position(db: Session, bucket_id: str):
+def update_task_position(db: Session, bucket_id: str) -> Bucket:
 
-#   tasks = db.query(Task).filter(Task.bucket_id == bucket_id).all()
+  bucket = db.query(Bucket).filter(Bucket.id == bucket_id).first()
 
-#   for index, task in enumerate(tasks):
-#     task.position = index
+  for index, task in enumerate(sorted(bucket.tasks, key=lambda task: task.position)):
+    task.position = index
   
-#   db.commit()
+  db.commit()
+  return bucket
 
 
 def update_task(db: Session, task: RequestEditTask) -> Task:
