@@ -62,7 +62,6 @@ def delete_bucket(db: Session, id: str):
       if task.subtasks is not None:
         for subtask in task.subtasks:
           db.delete(subtask)
-          pass
 
       db.delete(task)    
 

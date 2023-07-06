@@ -1,7 +1,7 @@
 from sqlalchemy.orm import Session
 from DTOs.requestDtos.task import RequestAddNewTask, RequestEditTask
 from api.utils.buckets import get_bucket_by_id, get_bucket_by_name
-from db.models.board import Bucket, Task
+from db.models.board import Board, Bucket, Task
 
 
 def get_tasks(db: Session, skip: int = 0, limit: int = 50) -> list[Task]:
@@ -60,27 +60,45 @@ def update_task(db: Session, task: RequestEditTask) -> Task:
   if task.description is not None:
     db_task.description = task.description
   
-  if task.status is not None:
-    new_bucket = get_bucket_by_name(db, task.status)
-    db_task.bucket_id = new_bucket.id
   
   db.commit()
   db.refresh(db_task)
   return db_task
 
 
-def update_both_buckets(db: Session, task: RequestEditTask):
+def update_task_bucteks(db: Session, task: RequestEditTask) -> Task:
 
-  old_bucket = get_bucket_by_id(db, task.bucketId)
-  new_bucket = get_bucket_by_name(db, task.status)
+  db_task = db.query(Task).filter(Task.id == task.id).first()
+  
+  if task.title is not None:
+    db_task.title = task.title
+  
+  if task.description is not None:
+    db_task.description = task.description
+  
+  if task.status is not None:
+    new_bucket = get_bucket_by_name(db, task.status)
+    db_task.bucket_id = new_bucket.id
+    db_task.position = 1000000
+  
+  db.commit()
+  db.refresh(db_task)
+  return db_task
 
-  for index, task in enumerate(sorted(old_bucket.tasks, key=lambda task: task.position)):
+
+def update_both_buckets(db: Session, new_Bucket_id: str, old_bucket_id: str, task_id: str):
+
+  old_bucket = update_task_position(db, old_bucket_id)
+  new_bucket = update_task_position(db, new_Bucket_id)
+
+  for index, task in enumerate(old_bucket.tasks):
     task.position = index
 
-  for index, task in enumerate(sorted(new_bucket.tasks, key=lambda task: task.position)):
-    if(task.id == task.id):
+  for index, task in enumerate(new_bucket.tasks):
+    if(task.id == task_id):
       task.position = 0
     task.position = index + 1
 
   db.commit()
+  return db.query(Board).filter(Board.is_active == True).first()
 
