@@ -42,7 +42,7 @@ def  create_task(db: Session, bucket_id: str, task: RequestAddNewTask) -> Task:
 def update_task_position(db: Session, bucket_id: str) -> Bucket:
 
   bucket = db.query(Bucket).filter(Bucket.id == bucket_id).first()
-
+  print("position: ", [b.position for b in bucket.tasks], bucket_id)
   for index, task in enumerate(sorted(bucket.tasks, key=lambda task: task.position)):
     task.position = index
   
@@ -86,18 +86,19 @@ def update_task_bucteks(db: Session, task: RequestEditTask) -> Task:
   return db_task
 
 
-def update_both_buckets(db: Session, new_Bucket_id: str, old_bucket_id: str, task_id: str):
+def update_both_buckets(db: Session, new_Bucket_id: str, old_bucket_id: str):
 
-  old_bucket = update_task_position(db, old_bucket_id)
-  new_bucket = update_task_position(db, new_Bucket_id)
+  old_bucket = get_bucket_by_id(db, old_bucket_id)
+  new_bucket = get_bucket_by_id(db, new_Bucket_id)
 
-  for index, task in enumerate(old_bucket.tasks):
+  for index, task in enumerate(sorted(old_bucket.tasks, key=lambda task: task.position)):
     task.position = index
 
-  for index, task in enumerate(new_bucket.tasks):
-    if(task.id == task_id):
+  for index, task in enumerate(sorted(new_bucket.tasks, key=lambda task: task.position)):
+    if(task.position == 1000000):
       task.position = 0
-    task.position = index + 1
+    else:
+      task.position = index + 1
 
   db.commit()
   return db.query(Board).filter(Board.is_active == True).first()

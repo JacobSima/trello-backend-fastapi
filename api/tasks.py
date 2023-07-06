@@ -85,8 +85,7 @@ async def editTak(task: RequestEditTask, db: Session = Depends(get_db)):
   
   updatedTask = update_task_bucteks(db, task)
 
-
-  board = update_both_buckets(db, updatedTask.bucket_id, task.bucketId, updatedTask.id)
+  board = update_both_buckets(db, updatedTask.bucket_id, task.bucketId)
 
   board_response = get_board_response(board )
 
