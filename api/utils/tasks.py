@@ -25,7 +25,7 @@ def  create_task(db: Session, bucket_id: str, task: RequestAddNewTask) -> Task:
   db_task = Task(
     title = task.title,
     description = task.description,
-    position = 0,
+    position = len(bucket.tasks) if bucket.tasks is not None else 0,
     status = bucket.name,
     bucket_id = bucket_id,
   )
@@ -35,14 +35,14 @@ def  create_task(db: Session, bucket_id: str, task: RequestAddNewTask) -> Task:
   db.refresh(db_task)
   return db_task
 
-def update_task_position(db: Session, bucket_id: str):
+# def update_task_position(db: Session, bucket_id: str):
 
-  tasks = db.query(Task).filter(Task.bucket_id == bucket_id).all()
+#   tasks = db.query(Task).filter(Task.bucket_id == bucket_id).all()
 
-  for index, task in enumerate(tasks):
-    task.position = index
+#   for index, task in enumerate(tasks):
+#     task.position = index
   
-  db.commit()
+#   db.commit()
 
 
 def update_task(db: Session, task: RequestEditTask) -> Task:

@@ -22,12 +22,12 @@ def get_bucket_by_name(db: Session, name: str) -> Bucket:
 def create_bucket(db: Session, bucket: RequestCreateNewBucket) -> Bucket:
    
    position = 0
-   board = db.query(Board).filter(Board.is_active == True)
+   board = db.query(Board).filter(Board.is_active == True).first()
 
    if board is not None:
      position = len(board.buckets)
    
-   db_bucket = Bucket(name = bucket.name, board_id = bucket.boardId, position = position)
+   db_bucket = Bucket(name = bucket.name, board_id = board.id, position = position)
 
    db.add(db_bucket)
    db.commit()

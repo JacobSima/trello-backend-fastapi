@@ -7,4 +7,4 @@ class RequestDeleteBucket(BaseModel):
 
 class RequestCreateNewBucket(BaseModel):
   name: str
-  boardId: str
+  boardId: str | None

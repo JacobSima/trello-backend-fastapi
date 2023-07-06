@@ -37,7 +37,7 @@ async def createTask(task: RequestAddNewTask , db: Session = Depends(get_db)):
 
   create_subTask_bulk(db, task.subtasks, task_created.id)
   
-  update_task_position(db, task.bucketId)
+  # update_task_position(db, task.bucketId)
 
   updated_task = get_task(db, task_created.id)
   
