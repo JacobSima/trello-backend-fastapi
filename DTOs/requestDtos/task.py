@@ -32,4 +32,12 @@ class TaskPosition(BaseModel):
 class TaskDraggedInSameColumn(BaseModel):
     bucketId: str
     tasksPosition: list[TaskPosition]
+
+
+class TaskDrgaggedInDifferentColumn(BaseModel):
+    taskId: str
+    startTaskPosition: TaskDraggedInSameColumn
+    finishTaskPosition: TaskDraggedInSameColumn
+
+
  

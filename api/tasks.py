@@ -1,12 +1,12 @@
 import fastapi
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
-from DTOs.requestDtos.task import RequestAddNewTask, RequestEditTask, TaskDraggedInSameColumn
+from DTOs.requestDtos.task import RequestAddNewTask, RequestEditTask, TaskDraggedInSameColumn, TaskDrgaggedInDifferentColumn
 from api.utils.boardResponse import get_board_response
 from api.utils.bucketResponse import get_bucket_response
 from api.utils.buckets import get_bucket_by_id, get_bucket_by_name
 
-from api.utils.tasks import get_tasks, get_task, create_task, setTaskPosition, update_task, update_both_buckets, update_task_bucteks, update_task_position
+from api.utils.tasks import get_tasks, get_task, create_task, setTaskPosition, setTaskPositions, update_task, update_both_buckets, update_task_bucteks, update_task_position
 from api.utils.taskResponse import get_task_reponse
 from api.utils.subtasks import create_subTask_bulk, saveCompletedSubtasks, saveNewSubtask, updateSubtask
 from db.db_setup import get_db
@@ -97,6 +97,14 @@ async def setTaskDraggedSameColumn(draggedTask: TaskDraggedInSameColumn, db: Ses
   
   board  = setTaskPosition(db, draggedTask)
   
+  return {"board": get_board_response(board )}
+
+
+@router.put("/api/boards/ontaskdraggeddifferentcolumn")
+async def setTaskDraggedDifferentColumn(draggedTask: TaskDrgaggedInDifferentColumn, db: Session = Depends(get_db)):
+  
+  board  = setTaskPositions(db, draggedTask)
+
   return {"board": get_board_response(board )}
 
 
