@@ -1,5 +1,5 @@
 from sqlalchemy.orm import Session
-from DTOs.requestDtos.task import RequestAddNewTask, RequestEditTask
+from DTOs.requestDtos.task import RequestAddNewTask, RequestEditTask, TaskDraggedInSameColumn
 from api.utils.buckets import get_bucket_by_id, get_bucket_by_name
 from db.models.board import Board, Bucket, Task
 
@@ -102,4 +102,20 @@ def update_both_buckets(db: Session, new_Bucket_id: str, old_bucket_id: str):
 
   db.commit()
   return db.query(Board).filter(Board.is_active == True).first()
+
+
+def setTaskPosition(db: Session, draggedTask: TaskDraggedInSameColumn):
+
+  bucket = get_bucket_by_id(db, draggedTask.bucketId)
+
+  if bucket is not None and bucket.tasks is not None:
+    for task in  bucket.tasks:
+      filtered_ids  = list(filter(lambda x: x.id == task.id, draggedTask.tasksPosition))
+      dragTask = filtered_ids[0]
+      if dragTask is not None:
+        task.position = dragTask.pos
+
+  db.commit()
+  return db.query(Board).filter(Board.is_active == True).first()
+      
 

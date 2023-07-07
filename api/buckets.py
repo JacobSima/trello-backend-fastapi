@@ -41,7 +41,7 @@ async def getBucket(bucket: RequestCreateNewBucket ,db: Session = Depends(get_db
 
 
 @router.put("/api/boards/oncolumndragged")
-async def getBucket(draggedBuckets: RequestDraggedBucket ,db: Session = Depends(get_db)):
+async def getBucketDragged(draggedBuckets: RequestDraggedBucket ,db: Session = Depends(get_db)):
 
   board = update_bucket_dragged_position(db, draggedBuckets)
 

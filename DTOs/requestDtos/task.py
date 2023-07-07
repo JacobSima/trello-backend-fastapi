@@ -24,4 +24,12 @@ class RequestEditTask(BaseModel):
     status: str | None
     bucketId: str
     subtasks: list[RequestEditSubTasks]
+
+class TaskPosition(BaseModel):
+    id: str
+    pos: int
+
+class TaskDraggedInSameColumn(BaseModel):
+    bucketId: str
+    tasksPosition: list[TaskPosition]
  
