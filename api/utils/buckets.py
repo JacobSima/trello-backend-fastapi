@@ -1,10 +1,10 @@
 from sqlalchemy.orm import Session
-from DTOs.requestDtos.bucket import RequestCreateNewBucket
+from DTOs.requestDtos.bucket import RequestCreateNewBucket, RequestDraggedBucket
 
 from db.models.board import Bucket, Board
 
 
-def get_buckets(db: Session, skip: int = 0, limit: int = 50):
+def get_buckets(db: Session, skip: int = 0, limit: int = 50) -> list[Bucket]:
 
   return db.query(Bucket).offset(skip).limit(limit).all()
 
@@ -12,6 +12,12 @@ def get_buckets(db: Session, skip: int = 0, limit: int = 50):
 def get_bucket_by_id(db: Session, id: str) -> Bucket:
   
   return db.query(Bucket).filter(Bucket.id == id).first()
+
+
+def get_bucket_by_position(db: Session, position: int) -> Bucket:
+  
+  return db.query(Bucket).filter(Bucket.position == position).first()
+
 
 def get_bucket_by_name(db: Session, name: str) -> Bucket:
   
@@ -43,7 +49,7 @@ def create_bucket_bulk(db: Session, buckets: list[Bucket]):
       db.refresh(bucket)
 
 
-def update_bucket_name(db: Session, id: str, name: str):
+def update_bucket_name(db: Session, id: str, name: str) -> Bucket:
 
   bucket = get_bucket_by_id(db, id)
   bucket.name = name
@@ -69,7 +75,7 @@ def delete_bucket(db: Session, id: str):
   db.commit()
 
 
-def update_bucket_position(db: Session):
+def update_bucket_position(db: Session) -> Board:
   board = db.query(Board).filter(Board.is_active == True).first()
 
   if board.buckets is not None:
@@ -78,4 +84,15 @@ def update_bucket_position(db: Session):
     db.commit()
   return board
 
+
+def update_bucket_dragged_position(db: Session, draggedBuckets: RequestDraggedBucket) -> Board:
+  source_bucket = get_bucket_by_position(db, draggedBuckets.sourceIndex)
+  destination_bucket = get_bucket_by_position(db, draggedBuckets.destinationIndex)
+
+  source_bucket.position = draggedBuckets.destinationIndex
+  destination_bucket.position = draggedBuckets.sourceIndex
+
+  db.commit()
+  return db.query(Board).filter(Board.is_active == True).first()
+  
 

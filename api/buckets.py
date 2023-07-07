@@ -1,11 +1,11 @@
 import fastapi
 from sqlalchemy.orm import Session
 from fastapi import Depends, HTTPException
-from DTOs.requestDtos.bucket import RequestCreateNewBucket
+from DTOs.requestDtos.bucket import RequestCreateNewBucket, RequestDraggedBucket
 from api.utils.boardResponse import get_board_response
 from api.utils.boards import get_active_Board, get_board
 from db.db_setup import get_db
-from api.utils.buckets import delete_bucket, get_buckets, create_bucket, get_bucket_by_id, update_bucket_position
+from api.utils.buckets import delete_bucket, get_buckets, create_bucket, get_bucket_by_id, update_bucket_dragged_position, update_bucket_position
 from api.utils.bucketResponse import get_buckets_reponse, get_bucket_response
 
 
@@ -38,6 +38,17 @@ async def getBucket(bucket: RequestCreateNewBucket ,db: Session = Depends(get_db
 
   board_response = get_board_response(board)
   return {"board": board_response}
+
+
+@router.put("/api/boards/oncolumndragged")
+async def getBucket(draggedBuckets: RequestDraggedBucket ,db: Session = Depends(get_db)):
+
+  board = update_bucket_dragged_position(db, draggedBuckets)
+
+  board_response = get_board_response(board)
+  return {"board": board_response}
+
+
 
 
 @router.delete("/api/bucket/{bucket_id}")
