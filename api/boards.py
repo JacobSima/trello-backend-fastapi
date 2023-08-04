@@ -36,9 +36,9 @@ async def getBoard(board_id: str, db: Session = Depends(get_db)):
   
   return {"board": {}} # Error
 
-@router.get("/api/boards/updateactiveboard/{index}")
-async def updateActiveBoard(index: str, db: Session = Depends(get_db)):
-  update_board_active(db, index)
+@router.get("/api/boards/updateactiveboard/{id}")
+async def updateActiveBoard(id: str, db: Session = Depends(get_db)):
+  update_board_active(db, id)
   return {"success": True}
 
 

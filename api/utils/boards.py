@@ -15,11 +15,11 @@ def get_board(db: Session, id: str) -> Board:
   return db.query(Board).filter(Board.id == id).first()
 
 
-def update_board_active(db: Session, index: str):
+def update_board_active(db: Session, id: str):
 
   boards = db.query(Board).all()
   for board in boards:
-    if board.position == int(index):
+    if board.id == id:
       board.is_active = True
     else:
       board.is_active = False
