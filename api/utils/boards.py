@@ -83,6 +83,16 @@ def delete_board_by_id(db: Session, board_id: str):
   db.delete(board)
   db.commit()
   return 
+
+def set_active_board(db: Session):
+
+  boards = db.query(Board).all()
+
+  if boards is not None:
+    if len(boards) > 0:
+      boards[0].is_active = True
+      db.commit()
+  return 
    
 
   

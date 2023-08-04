@@ -86,8 +86,8 @@ def update_bucket_position(db: Session) -> Board:
 
 
 def update_bucket_dragged_position(db: Session, draggedBuckets: RequestDraggedBucket) -> Board:
-  source_bucket = get_bucket_by_position(db, draggedBuckets.sourceIndex)
-  destination_bucket = get_bucket_by_position(db, draggedBuckets.destinationIndex)
+  source_bucket = get_bucket_by_id(db, draggedBuckets.sourceId)
+  destination_bucket = get_bucket_by_id(db, draggedBuckets.destinationId)
 
   source_bucket.position = draggedBuckets.destinationIndex
   destination_bucket.position = draggedBuckets.sourceIndex

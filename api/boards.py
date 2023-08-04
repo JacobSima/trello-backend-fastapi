@@ -3,7 +3,7 @@ from sqlalchemy.orm import Session
 from fastapi import Depends
 
 from DTOs.requestDtos.board import RequestCreateNewBoard, RequestEditBoard
-from api.utils.boards import delete_board_by_id, get_boards, create_board, update_active_board_status, update_board_name, get_board, update_board_active
+from api.utils.boards import delete_board_by_id, get_boards, create_board, update_active_board_status, update_board_name, get_board, update_board_active, set_active_board
 from api.utils.buckets import create_bucket_bulk, update_bucket_name, delete_bucket, update_bucket_position
 from db.db_setup import get_db
 from db.models.board import Bucket
@@ -95,6 +95,6 @@ async def editBoard(board: RequestEditBoard, db: Session = Depends(get_db)):
 @router.delete("/api/boards/{board_id}")
 async def deleteBoard(board_id: str, db: Session = Depends(get_db)):
 
-  success = delete_board_by_id(db, board_id)
-  
-  return {"success": success}
+  delete_board_by_id(db, board_id)
+  set_active_board(db)
+  return {"success": True}

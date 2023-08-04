@@ -11,4 +11,6 @@ class RequestCreateNewBucket(BaseModel):
 
 class RequestDraggedBucket(BaseModel):
   sourceIndex: int
+  sourceId: str
   destinationIndex: int
+  destinationId: str
