@@ -1,0 +1,32 @@
+version: "3.8"
+
+services:
+  opusKanbanDB:
+    container_name: opusKanbanDB
+    image: postgres
+    restart: unless-stopped
+    ports:
+      - 5434:5432
+    environment:
+      - POSTGRES_USER:postgres
+      - POSTGRES_PASSWORD:jnjdeploy1
+      - POSTGRES_DB:opusKanbanDB
+    volumes:
+      - opusKanbanDB_volume:/var/lib/opusKanbanDB/data
+  
+  server:
+    container_name: server
+    build: .
+    command: bash -c "alembic upgrade head && uvicorn main:app --host 0.0.0.0 --port 8000 --reload"
+    volumes:
+      - .:/app
+    ports:
+      - 8000:8000
+    restart: unless-stopped
+    depends_on:
+      - opusKanbanDB
+
+volumes:
+  opusKanbanDB_volume:
+    driver: local 
+

@@ -6,8 +6,8 @@ import urllib.parse
 # Replace these values with your actual PostgreSQL credentials
 POSTGRES_USERNAME = "postgres"
 POSTGRES_PASSWORD = "jnjdeploy1"
-POSTGRES_HOSTNAME = "localhost"
-POSTGRES_DB_NAME = "opuskanban"
+POSTGRES_HOSTNAME = "192.168.1.101:5434"
+POSTGRES_DB_NAME = "opusKanbanDB"
 POSTGRES_DB_CONNECT = "postgresql+psycopg2"
 
 encoded_password = urllib.parse.quote(POSTGRES_PASSWORD)
