@@ -1,5 +1,6 @@
 from pydantic import BaseModel, Field
-from typing import List, Any
+from typing import List
+from DTOs.reponseDtos.task import ResponseTask
 
 
 class ResponseDeleteBucket(BaseModel):
@@ -12,4 +13,4 @@ class ResponseBucket(BaseModel):
   boardId: str
   pos: int
   existing: bool = Field(default=True)
-  tasks: List[Any]
+  tasks: List[ResponseTask]

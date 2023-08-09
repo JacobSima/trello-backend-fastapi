@@ -1,7 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker
-import urllib.parse
+import os
+from dotenv import load_dotenv
 
 # Replace these values with your actual PostgreSQL credentials
 POSTGRES_USERNAME = "postgres"
@@ -10,10 +11,11 @@ POSTGRES_HOSTNAME = "192.168.1.101:5434"
 POSTGRES_DB_NAME = "opusKanbanDB"
 POSTGRES_DB_CONNECT = "postgresql+psycopg2"
 
-encoded_password = urllib.parse.quote(POSTGRES_PASSWORD)
+load_dotenv(".env")
 
 # Create the connection string
-SQLALCHEMY_DATABASE_URL = f"{POSTGRES_DB_CONNECT}://{POSTGRES_USERNAME}:{POSTGRES_PASSWORD}@{POSTGRES_HOSTNAME}/{POSTGRES_DB_NAME}"
+SQLALCHEMY_DATABASE_URL = os.environ["POSTGRES_URL_DOCKER"]
+# SQLALCHEMY_DATABASE_URL = os.environ["POSTGRES_URL_LOCAL"]
 
 
 engine = create_engine(
