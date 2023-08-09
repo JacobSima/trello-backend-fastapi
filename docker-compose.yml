@@ -1,4 +1,5 @@
 version: "3.8"
+name: opuskanban-backend
 
 services:
   opusKanbanDB:
@@ -8,11 +9,13 @@ services:
     ports:
       - 5434:5432
     environment:
-      - POSTGRES_USER:postgres
-      - POSTGRES_PASSWORD:jnjdeploy1
-      - POSTGRES_DB:opusKanbanDB
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: jnjdeploy1
+      POSTGRES_DB: opusKanbanDB
     volumes:
       - opusKanbanDB_volume:/var/lib/opusKanbanDB/data
+    networks:
+      - opuskanbanbackend
   
   server:
     container_name: server
@@ -25,6 +28,11 @@ services:
     restart: unless-stopped
     depends_on:
       - opusKanbanDB
+    networks:
+      - opuskanbanbackend
+
+networks:
+  opuskanbanbackend:
 
 volumes:
   opusKanbanDB_volume:
