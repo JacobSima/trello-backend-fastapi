@@ -7,7 +7,6 @@ class RequestDeleteBucket(BaseModel):
 
 class RequestCreateNewBucket(BaseModel):
   name: str
-  boardId: str | None
 
 class RequestDraggedBucket(BaseModel):
   sourceIndex: int
