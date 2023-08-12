@@ -12,6 +12,9 @@ psycopg2-binary = "*"
 alembic = "*"
 uuid = "*"
 python-dotenv = "*"
+pytest = "*"
+requests = "*"
+httpx = "*"
 
 [dev-packages]
 

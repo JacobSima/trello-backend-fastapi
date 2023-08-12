@@ -11,6 +11,9 @@ from api.utils.boardResponse import build_boards_repsonse, get_board_response
 
 router = fastapi.APIRouter()
 
+@router.get("/")
+async def root():
+  return {"message": "Welcome to Opus1.io Mini Trello"}
 
 @router.get("/api/boards")
 async def getAllBoards(skip: int = 0, limit : int = 100, db: Session = Depends(get_db)):
