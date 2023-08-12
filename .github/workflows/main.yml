@@ -20,6 +20,9 @@ jobs:
   deploy:
     # Define the runner used in the worflow, actual machine server that runs the jobs
     runs-on: ubuntu-latest
+    defaults:
+        run:
+          shell: bash -eo pipefail
 
     steps:
       # Check out repo so our workflow can access it
@@ -32,6 +35,8 @@ jobs:
         uses: actions/setup-python@v2
         with:
           python-version: 3
+        env:
+          pythonLocation: /opt/hostedtoolcache/Python/3.9.x/x64
       
       # Step-2 Cache Dependencies
       - name: Cache Dependencies
