@@ -13,7 +13,7 @@ on:
   pull_request:
     branches:
       - "main"
-      
+
 
 jobs:
   
@@ -49,13 +49,15 @@ jobs:
       - name: Install Pipenv
         run: pip install pipenv
 
-      # Step-4 Set up Virtual Environment and Install Dependencies
-      - name: Set up Virtual Environment and Install Dependencies
-        run: |
-          pipenv install --system --deploy --ignore-pipfile  
-          pipenv shell
+      # Step-4 Install Dependencies
+      - name: Install Dependencies
+        run: pipenv install --system --deploy --ignore-pipfile  
 
-      # Step-5 Run Tests
+      # Step-5 Activate Virtual Environment
+      - name: Activate Virtual Environment
+        run: pipenv shell
+
+      # Step-6 Run Tests
       - name: Run Tests
         run: pipenv run pytest
 
