@@ -13,26 +13,23 @@ on:
   pull_request:
     branches:
       - "main"
-
+      
 
 jobs:
   
   deploy:
     # Define the runner used in the worflow, actual machine server that runs the jobs
     runs-on: ubuntu-latest
-    defaults:
-        run:
-          shell: bash -eo pipefail
 
     steps:
       # Check out repo so our workflow can access it
       - name: Checkout Code 
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       
       # Step-1 Setup Python
       - name: Set up Python
         # this action sets up a python environment for use in actions
-        uses: actions/setup-python@v2
+        uses: actions/setup-python@v3
         with:
           python-version: 3
         env:
@@ -40,7 +37,7 @@ jobs:
       
       # Step-2 Cache Dependencies
       - name: Cache Dependencies
-        uses: actions/cache@v2
+        uses: actions/cache@v3
         id: pipenv-cache
         with:
           path: ~/.local/share/virtualenvs
