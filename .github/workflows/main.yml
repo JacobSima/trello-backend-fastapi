@@ -53,11 +53,7 @@ jobs:
       - name: Install Dependencies
         run: pipenv install --system --deploy --ignore-pipfile  
 
-      # # Step-5 Activate Virtual Environment
-      # - name: Activate Virtual Environment
-      #   run: pipenv shell
-
-      # Step-6 Run Tests
+      # Step-5 Run Tests
       - name: Run Tests
         run: pipenv run pytest
 
